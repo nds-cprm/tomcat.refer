@@ -1,0 +1,61 @@
+# vim:set ft=dockerfile:
+FROM cprm.nds:debian.refer
+ENV LANG C.UTF8
+
+# wise 1
+RUN mkdir -p /usr/share/man/man1
+
+# uses debian default distro packages. order matter 
+RUN set -eux; \
+    apt update; \
+    apt upgrade -y ; \
+    apt install -y ca-certificates ; \
+    apt install -y openjdk-11-jre ; \
+    apt install -y tomcat9 ; \
+    apt install -y tomcat9-docs ; \ 
+    apt install -y tomcat9-admin ; \
+    apt install -y tomcat9-user ; \
+    apt install -y tomcat9-examples 
+
+# default locale
+
+RUN set -eux; \
+    apt install -y --no-install-recommends locales; \
+    localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+
+ENV  LC_ALL en_US.UTF-8
+ENV  LANG en_US.UTF-8
+ENV  LANGUAGE en_US.UTF-8
+
+# simplify
+ENV JAVA_HOME /usr/lib/java
+RUN set -eux ; \
+	ln -snf /usr/lib/jvm/java-11-openjdk-amd64/ /usr/lib/java ; \
+	ln -s /usr/share/tomcat9/bin/catalina.sh /bin 
+
+# defaults
+RUN set -eux ; \
+	/usr/share/tomcat9/bin/makebase.sh /opt/tomcat -w ; \
+	cp -r /etc/tomcat9/* /opt/tomcat/conf/
+
+# clean 
+RUN set -eux; \
+    apt autoremove -y ; \
+    apt clean -y ; \
+    rm -rf /var/lib/apt/lists/*
+
+#sane 2
+RUN rm -rf /usr/share/man/*
+
+# wise 2
+WORKDIR /
+
+RUN mkdir -p /docker-entrypoint.d
+
+COPY docker-entrypoint.sh /
+
+# specific
+ENTRYPOINT ["/docker-entrypoint.sh " ]
+
+# CMD ["run"]
+
