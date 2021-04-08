@@ -1,5 +1,5 @@
 # vim:set ft=dockerfile:
-FROM cprm.nds:debian.refer
+FROM cprm.nds:debian2refer
 ENV LANG C.UTF8
 
 # wise 1
@@ -55,7 +55,8 @@ RUN mkdir -p /docker-entrypoint.d
 COPY docker-entrypoint.sh /
 
 # specific
-ENTRYPOINT ["/docker-entrypoint.sh " ]
+
+ENTRYPOINT ["/docker-entrypoint.sh" ]
 
 # CMD ["run"]
 

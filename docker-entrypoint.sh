@@ -22,13 +22,6 @@ if [ "${1:0:1}" = '-' ]; then
 
 fi
 
-# allow the container to be started with `--user`
-if [ "${1}" =  "--user" ] && [ "$(id -u)" = '0' ]; then
-
-    gosu $1 "$BASH_SOURCE" "$@"
-
-fi
-
 # allow the scripts from pseudo init directory
 if [ -d "/docker-entrypoint.d/" ]; then
     echo >&3 "$0: /docker-entrypoint.d/ is not empty, will attempt to perform configuration"
